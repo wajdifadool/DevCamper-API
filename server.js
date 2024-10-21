@@ -6,6 +6,7 @@ const dotenv = require('dotenv')
 const colors = require('colors')
 const morgan = require('morgan')
 const connectDB = require('./config/db')
+const errorHandler = require('./middleware/error')
 
 // Routes Files
 const bootcamps = require('./routes/bootcamps')
@@ -37,8 +38,10 @@ if (process.env.NODE_ENV === 'development') {
 // }
 
 // app.use(logger) // we have accsess to middlware throgh out all routes
+
 // Mount Router (using it from other file )
 app.use('/api/v1/bootcamps', bootcamps)
+app.use(errorHandler)
 
 // Middleware to parse JSON requests
 // app.use(express.json());
