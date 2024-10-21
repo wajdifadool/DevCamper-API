@@ -3,7 +3,7 @@ const colors = require('colors')
 const ErrorResponse = require('../utils/errorResponse')
 const errorHandler = (err, req, res, next) => {
   //   console.log(err)
-  console.log(err.name)
+  console.log(err.message)
 
   let error = { ...err }
 
