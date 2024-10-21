@@ -2,8 +2,11 @@
 const colors = require('colors')
 const ErrorResponse = require('../utils/errorResponse')
 const errorHandler = (err, req, res, next) => {
+  //   console.log(err)
   console.log(err.name)
+
   let error = { ...err }
+
   error.message = err.message
   let message = ''
   // Mongoose Bad Object Id
@@ -13,6 +16,18 @@ const errorHandler = (err, req, res, next) => {
     error = new ErrorResponse(message, 404)
   }
 
+  //   Momgoose  duplicate key
+  if (err.code === 11000) {
+    message = 'duplicate Name fieldd value error for the name'
+    error = new ErrorResponse(message, 400)
+  }
+
+  //   Momgoose  validtaion error
+  if (err.name === 'ValidationError') {
+    message = Object.values(err.errors).map((val) => val.message)
+
+    error = new ErrorResponse(message, 400)
+  }
   res.status(error.statusCode || 500).json({
     success: false,
     error: error.message || 'Server Error',
