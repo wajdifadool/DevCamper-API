@@ -10,6 +10,22 @@ const {
   deleteBootcampById,
 } = require('../controllers/bootcamps')
 
+// Include Other resource Router
+const courseRouter = require('./courses')
+// Re-route into other resource routers
+/**
+ * So it's basically going to pass it on to the
+ * course router rather than call getCourses from here
+ * Example:
+ *  calling www.domain.com/bootcamps:bootcampId/courses
+ *  will fire on courseRouter
+ *  at the Endpoint "/" at-> router.route('/').get(getCourses)
+ *  also  made sure in the router/courses.js
+ * read this: https://expressjs.com/en/guide/routing.html
+ */
+
+router.use('/:bootcampId/courses', courseRouter)
+
 router
   .route('/')
   //
@@ -18,9 +34,7 @@ router
 
 router
   .route('/:id')
-  //
   .get(getBootcampById)
-  .post(createBootcamp)
   .put(updateBootcampById)
   .delete(deleteBootcampById)
 
