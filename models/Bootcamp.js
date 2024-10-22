@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 const slugify = require('slugify')
-const geocoder = require('../utils/geocoder')
+const geocode = require('../utils/geocoder')
 
+const axios = require('axios')
 const BootcampSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -99,5 +100,35 @@ const BootcampSchema = new mongoose.Schema({
     default: Date.now,
   },
 })
+
+//https://mongoosejs.com/docs/middleware.html#types-of-middleware
+// Create Bootcamp Slug from the name
+// will run before the documnet get saved
+BootcampSchema.pre('save', function (next) {
+  // we can accses any field using this.
+  this.slug = slugify(this.name, { lower: true })
+  next() // so it can continue to the next function (creating the object)
+})
+
+// TODO:FIX the api works , but im boreeeeed to debuugg
+// // Geocode & create location field
+// BootcampSchema.pre('save', async function (next) {
+//   const loc = await geocode(this.address)
+
+//   this.location = {
+//     type: 'Point',
+//     coordinates: [loc.data[0].lon, loc.data[0].lat],
+//     formattedAddress: loc.data[0].display_name,
+//     // street: loc[0].streetName,
+//     // city: loc[0].city,
+//     // state: loc[0].stateCode,
+//     // zipcode: loc[0].zipcode,
+//     // country: loc[0].countryCode,
+//   }
+
+//   // Do not save address in DB
+//   this.address = undefined
+//   next()
+// })
 
 module.exports = mongoose.model('Bootcamp', BootcampSchema)
