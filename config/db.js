@@ -6,14 +6,9 @@ const mongoose = require('mongoose')
 // Connect to MongoDB
 const connectDB = async () => {
   const conn = await mongoose.connect(process.env.MONGO_URI)
-
-  console.log('---\t \t\t --- \t\t\t--'.green)
   console.log(
-    colors.bgBrightGreen(
-      `MongoDB connected: 🍃 ${conn.connection.host} 🍃 `.bold
-    )
+    colors.green(`🍃 MongoDB connected:  ${conn.connection.host} 🍃 `.bold)
   )
-  console.log('---\t \t\t --- \t\t\t--'.green)
 
   //try and catch are no more needed
 

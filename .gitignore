@@ -32,3 +32,7 @@ dist/
 
 # Windows-specific files
 Thumbs.db
+
+
+# FireBase 
+devcamper-api-4dc84-firebase-adminsdk-jkmf7-f4ec10919c.json

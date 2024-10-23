@@ -7,7 +7,7 @@ const colors = require('colors')
 const morgan = require('morgan')
 const connectDB = require('./config/db')
 const errorHandler = require('./middleware/error')
-
+const { initializeFirebase, uploadFile } = require('./config/firebasestorage')
 // Routes Files
 const bootcamps = require('./routes/bootcamps')
 const courses = require('./routes/courses')
@@ -18,6 +18,12 @@ dotenv.config({ path: './config/config.env' })
 //Call the connectDB function
 connectDB()
 
+/** FireBase Storage */
+initializeFirebase()
+
+// test
+// uploadFile('/Users/wajdi/Downloads/IMG_7084.JPG')
+/**End of fire base storage config */
 const app = express()
 
 // Body Parser
@@ -71,3 +77,29 @@ process.on('unhandledRejection', (err, promise) => {
   console.log(`Error Connection To database: ${err.message}`.red.underline.bold)
   server.close(() => process.exit(1)) // Exit process with failure
 })
+
+/*
+This event is triggered when the process is asked to terminate 
+such as when the server is stopped or restarted 
+(common in production environments like Kubernetes or Docker).
+not for my envoirment , nahhh 
+*/
+// Handle SIGTERM signal to gracefully shut down Firebase connections
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing Firebase connections')
+
+  // Optionally, delete the Firebase app instance to clean up
+  admin
+    .app()
+    .delete()
+    .then(() => {
+      console.log('Firebase connections closed')
+      process.exit(0) // Exit the process once Firebase is cleaned up
+    })
+    .catch((err) => {
+      console.error('Error while closing Firebase connections:', err)
+      process.exit(1)
+    })
+})
+
+uploadFile('/Users/wajdi/Downloads/IMG_7084.JPG')
