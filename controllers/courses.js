@@ -104,17 +104,36 @@ exports.updateCourseById = asyncHandler(async (req, res, next) => {
   })
 })
 
-// @desc    Delete Bootcamp by ID
+// @desc    Delete Course by ID
+// @route   DELETE /api/v1/bootcamps/:id
+// @access  Private
+// exports.deleteCourseById = asyncHandler(async (req, res, next) => {
+//   const course = await Course.findByIdAndDelete(req.params.id)
+
+//   if (!course) {
+//     return next(
+//       new ErrorResponse(`Course Not found with id of ${req.params.id}`, 404)
+//     )
+//   }
+
+//   return res.status(200).json({ success: true, data: {} })
+// })
+
+// @desc    Delete Course by ID
 // @route   DELETE /api/v1/bootcamps/:id
 // @access  Private
 exports.deleteCourseById = asyncHandler(async (req, res, next) => {
-  const course = await Course.findByIdAndDelete(req.params.id)
+  // https://mongoosejs.com/docs/api/model.html#Model.deleteOne()
+  // This will trigger the pre('remove') middleware
+  const course = await Course.findById(req.params.id)
 
   if (!course) {
     return next(
       new ErrorResponse(`Course Not found with id of ${req.params.id}`, 404)
     )
   }
+
+  await course.deleteOne() // will delete and triger the pre.remove middileware
 
   return res.status(200).json({ success: true, data: {} })
 })
