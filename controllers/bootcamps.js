@@ -2,6 +2,8 @@
 // controllers/bootcamps.js
 
 const Bootcamp = require('../models/Bootcamp')
+const Course = require('../models/Course')
+
 const asyncHandler = require('../middleware/async')
 
 const ErrorResponse = require('../utils/errorResponse')
@@ -23,7 +25,7 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
     /\b(gt|gte|eq|lte|lt|in)\b/g,
     (match) => `$${match}`
   )
-  let query = Bootcamp.find(JSON.parse(queryString))
+  let query = Bootcamp.find(JSON.parse(queryString)).populate('courses')
 
   // get the select  fileds
   //https://mongoosejs.com/docs/queries.html#executing
@@ -142,13 +144,21 @@ exports.updateBootcampById = asyncHandler(async (req, res, next) => {
 // @route   DELETE /api/v1/bootcamps/:id
 // @access  Private
 exports.deleteBootcampById = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id)
+  const bootcamp = await Bootcamp.findById(req.params.id)
+
+  console.log('bootcamp.id:')
+  console.log(bootcamp._id)
+  console.log(bootcamp.id)
 
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp Not found with id of ${req.params.id}`, 404)
     )
   }
+
+  // Cascade delete courses related to the bootcamp
+  await bootcamp.deleteOne() // will delete and triger the pre.remove middileware
+
   return res.status(200).json({ success: true, data: {} })
 })
 
