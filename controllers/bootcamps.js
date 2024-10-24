@@ -13,74 +13,7 @@ const ErrorResponse = require('../utils/errorResponse')
 // @route   GET /api/v1/bootcamps
 // @access  Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-  const reqQuery = { ...req.query }
-
-  const removeFileds = ['select', 'sort', 'page', 'limit']
-
-  removeFileds.forEach((param) => {
-    delete reqQuery[param]
-  })
-  let queryString = JSON.stringify(reqQuery)
-
-  queryString = queryString.replace(
-    /\b(gt|gte|eq|lte|lt|in)\b/g,
-    (match) => `$${match}`
-  )
-  let query = Bootcamp.find(JSON.parse(queryString)).populate('courses')
-
-  // get the select  fileds
-  //https://mongoosejs.com/docs/queries.html#executing
-  if (req.query.select) {
-    const fileds = req.query.select.split(',').join(' ')
-    query = query.select(fileds)
-  }
-
-  // either its  sorted by givne param or  set it by date as default
-  if (req.query.select) {
-    const sortBy = req.query.select.split(',').join(' ')
-    query = query.sort(sortBy)
-  } else {
-    query = query.sort('-createdAt')
-  }
-
-  // Pagination
-  const page = parseInt(req.query.page, 10) || 1
-  const limit = parseInt(req.query.limit, 10) || 100
-  const startIndex = (page - 1) * limit
-  const endIndex = page * limit
-  const total = await Bootcamp.countDocuments() // the while bootcamp in the DB
-
-  console.log(total, page, limit, startIndex, endIndex)
-
-  // Quering
-  query = query.skip(startIndex).limit(limit)
-
-  // Call the DB HERE
-  const bootcamps = await query
-
-  // Pagination result we  added to the response
-  const pagination = {}
-
-  if (endIndex < total) {
-    pagination.next = {
-      page: page + 1,
-      limit: limit,
-    }
-  }
-
-  if (startIndex > 0) {
-    pagination.prev = {
-      page: page - 1,
-      limit: limit,
-    }
-  }
-
-  res.status(200).json({
-    pagination: pagination,
-    success: true,
-    count: bootcamps.length,
-    data: bootcamps,
-  })
+  res.status(200).json(res.advancedResults)
 })
 
 /**
@@ -102,7 +35,8 @@ exports.getBootcampById = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Bootcamp Not found with id of ${req.params.id}`, 404)
     )
   }
-  return res.status(200).json({ success: true, data: bootcamp })
+
+  res.status(200).json({ success: true, data: bootcamp })
 })
 
 // @desc    Create new Bootcamp
@@ -147,10 +81,6 @@ exports.updateBootcampById = asyncHandler(async (req, res, next) => {
 exports.deleteBootcampById = asyncHandler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findById(req.params.id)
 
-  console.log('bootcamp.id:')
-  console.log(bootcamp._id)
-  console.log(bootcamp.id)
-
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp Not found with id of ${req.params.id}`, 404)
@@ -160,7 +90,7 @@ exports.deleteBootcampById = asyncHandler(async (req, res, next) => {
   // Cascade delete courses related to the bootcamp
   await bootcamp.deleteOne() // will delete and triger the pre.remove middileware
 
-  return res.status(200).json({ success: true, data: {} })
+  res.status(200).json({ success: true, data: {} })
 })
 
 // TODO: add image to the bootcamp .43
@@ -231,6 +161,6 @@ exports.uploadImageBootcamp = asyncHandler(async (req, res, next) => {
       return next(new ErrorResponse('Image upload failed', 500))
     }
   })
-}) // end of file Uppload
+}) // end of file
 
 // END OF FILE

@@ -1,7 +1,7 @@
 // `
 // server.js
 const express = require('express')
-// const mongoose = require('mongoose')
+const path = require('path')
 const dotenv = require('dotenv')
 const colors = require('colors')
 const morgan = require('morgan')
@@ -34,7 +34,12 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
+// File Uploading middleware
 app.use(fileUpload())
+
+// Set static Folder so we can use the image
+app.use(express.static(path.join(__dirname, 'public')))
+
 // const logger = (req, res, next) => {
 //   console.log(`${req.method }`)
 // )}
@@ -48,7 +53,9 @@ app.use(fileUpload())
 // }
 
 // app.use(logger) // we have accsess to middlware throgh out all routes
-
+// ----------------
+// --------------- Bootcamps -----------
+// ----------------
 // Mount Router (using it from other file )
 app.use('/api/v1/bootcamps', bootcamps)
 app.use('/api/v1/courses', courses)
@@ -56,15 +63,12 @@ app.use('/api/v1/courses', courses)
 app.use(errorHandler)
 
 // Middleware to parse JSON requests
-// app.use(express.json());
+// app.use(express.json())
 
 // // Get the port and environment from the environment variables
 const PORT = process.env.PORT || 5000
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
-// ----------------
-// --------------- Bootcamps -----------
-// ----------------
 app.get('/', (req, res) => {
   res.status(200)
   res.json({ message: 'Server is alive and kicking . . . . ' })

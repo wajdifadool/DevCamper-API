@@ -2,9 +2,6 @@
 const colors = require('colors')
 const ErrorResponse = require('../utils/errorResponse')
 const errorHandler = (err, req, res, next) => {
-  //   console.log(err)
-  console.log(err.message)
-
   let error = { ...err }
 
   error.message = err.message
@@ -32,6 +29,7 @@ const errorHandler = (err, req, res, next) => {
     success: false,
     error: error.message || 'Server Error',
   })
+  // TODO:ADD looger for finding the error 
 }
 
 module.exports = errorHandler
