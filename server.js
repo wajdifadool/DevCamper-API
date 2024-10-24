@@ -11,6 +11,7 @@ const { initializeFirebase, uploadFile } = require('./config/firebasestorage')
 // Routes Files
 const bootcamps = require('./routes/bootcamps')
 const courses = require('./routes/courses')
+const fileUpload = require('express-fileupload')
 
 // Load config.env
 dotenv.config({ path: './config/config.env' })
@@ -33,6 +34,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
+app.use(fileUpload())
 // const logger = (req, res, next) => {
 //   console.log(`${req.method }`)
 // )}
@@ -102,4 +104,4 @@ process.on('SIGTERM', () => {
     })
 })
 
-uploadFile('/Users/wajdi/Downloads/IMG_7084.JPG')
+// uploadFile('/Users/wajdi/Downloads/IMG_7084.JPG')

@@ -29,6 +29,7 @@ const uploadFile = async (filePath) => {
       destination: `uploads/${fileName}`, // Set the destination in the bucket
     })
     console.log(`File ${fileName} uploaded successfully.`)
+    console.log(file.publicUrl())
     return file.publicUrl() // Return the public URL of the uploaded file
   } catch (error) {
     console.error('Error uploading file:', error)

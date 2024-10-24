@@ -8,6 +8,7 @@ const {
   getBootcampById,
   updateBootcampById,
   deleteBootcampById,
+  uploadImageBootcamp,
 } = require('../controllers/bootcamps')
 
 // Include Other resource Router
@@ -37,6 +38,8 @@ router
   .get(getBootcampById)
   .put(updateBootcampById)
   .delete(deleteBootcampById)
+
+router.route('/:id/photo').put(uploadImageBootcamp)
 
 // Route to create a bootcamp
 // router.post('/', createBootcamp )

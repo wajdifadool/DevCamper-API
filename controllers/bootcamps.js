@@ -3,8 +3,9 @@
 
 const Bootcamp = require('../models/Bootcamp')
 const Course = require('../models/Course')
-
+const { uploadFile } = require('../config/firebasestorage')
 const asyncHandler = require('../middleware/async')
+const path = require('path')
 
 const ErrorResponse = require('../utils/errorResponse')
 
@@ -161,5 +162,75 @@ exports.deleteBootcampById = asyncHandler(async (req, res, next) => {
 
   return res.status(200).json({ success: true, data: {} })
 })
+
+// TODO: add image to the bootcamp .43
+// @desc    Upload Photo for  Bootcamp by ID
+// @route   PUT /api/v1/bootcamps/:id/photo
+// @access  Private
+exports.uploadImageBootcamp = asyncHandler(async (req, res, next) => {
+  const bootcamp = await Bootcamp.findById(req.params.id)
+  if (!bootcamp) {
+    return next(
+      new ErrorResponse(`Bootcamp Not found with id of ${req.params.id}`, 404)
+    )
+  }
+
+  if (!req.files) {
+    return next(new ErrorResponse(`please upload a file`, 400))
+  }
+  // const filePath = req.file.path // Assuming the file path is available after file upload
+
+  const file = req.files.file
+
+  // filetype
+  if (!file.mimetype.startsWith('image/')) {
+    return next(new ErrorResponse(`please upload image file`, 400))
+  }
+
+  // TODO:file size
+
+  // Create custom filename
+  file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`
+
+  // process.env.FILE_UPLOAD_PATH TODO: Move to .env
+  const filePath = `public/uploads/${file.name}`
+
+  file.mv(filePath, async (err) => {
+    if (err) {
+      // console.error(`Error Uploading  Image\n${err}`) TODO:LOGGER
+      return next(new ErrorResponse(`Problem with file upload`, 500))
+    }
+
+    // now we have the file in the server
+
+    try {
+      // Upload to Storage
+
+      const imageUrl = await uploadFile(filePath)
+      console.log('image Uploaded to the data base ')
+      console.log(imageUrl)
+
+      //  update Botcamp image
+
+      // TODO: DRY, We already found the Bootcamp
+      // bootcamp.updateOne({
+
+      // })
+      //   // TODO: make sure we can read the image URL
+      await Bootcamp.findByIdAndUpdate(
+        req.params.id,
+
+        { photo: imageUrl }
+      )
+
+      res.status(200).json({
+        success: true,
+        data: bootcamp,
+      })
+    } catch (error) {
+      return next(new ErrorResponse('Image upload failed', 500))
+    }
+  })
+}) // end of file Uppload
 
 // END OF FILE
