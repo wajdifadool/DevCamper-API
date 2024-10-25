@@ -4,6 +4,10 @@
 
 ## Endpoints
 
+> - See PostMan project doccs : to be addd
+
+api/
+
 This project is a full RESTful API built using **Node.js**, **Express**, **MongoDB**, and **Mongoose**. The API provides the ability to perform CRUD operations on data stored in a MongoDB database.
 
 ### Features
@@ -46,3 +50,35 @@ This project is a full RESTful API built using **Node.js**, **Express**, **Mongo
     MONGO_URI=your_mongodb_connection_string
     PORT=your_preferred_port
    ```
+
+### Whats in the Box ?
+
+- HTTP Essentials
+- Postman Client & Postman Documentation
+- RESTful API
+- Express Framework
+- Routing & Controller Methods
+- MongoDB Atlas & Compass Mongoose ODM
+- Advanced Query (Pagination, filter, - etc) Models & Relationships
+
+- Middleware (Express & Mongoose)
+
+<!-- - Geocoding -->
+
+- Custom Error Handling
+
+<!-- - User Roles & Permissions -->
+
+- Aggregation
+
+- Photo Upload & Firebbase Storage
+
+- Authentication With JWT & Cookies
+
+<!-- - Emailing Password Reset Tokens -->
+
+- Custom Database Seeder Using JSON
+
+<!-- - Files Password & Token Hashing -->
+<!-- - Security: NoSQL Injection, XSS, etc - Creating Documentation -->
+<!-- - Deployment With PM2, NGINX, SSL -->
