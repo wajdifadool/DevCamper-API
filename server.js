@@ -4,6 +4,8 @@ const express = require('express')
 const path = require('path')
 const dotenv = require('dotenv')
 const colors = require('colors')
+const cookieParser = require('cookie-parser')
+
 const morgan = require('morgan')
 const connectDB = require('./config/db')
 const errorHandler = require('./middleware/error')
@@ -11,8 +13,8 @@ const { initializeFirebase, uploadFile } = require('./config/firebasestorage')
 // Routes Files
 const bootcamps = require('./routes/bootcamps')
 const courses = require('./routes/courses')
+const auth = require('./routes/auth')
 const fileUpload = require('express-fileupload')
-
 // Load config.env
 dotenv.config({ path: './config/config.env' })
 
@@ -40,6 +42,9 @@ app.use(fileUpload())
 // Set static Folder so we can use the image
 app.use(express.static(path.join(__dirname, 'public')))
 
+// cookie Parser
+app.use(cookieParser())
+
 // const logger = (req, res, next) => {
 //   console.log(`${req.method }`)
 // )}
@@ -59,6 +64,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 // Mount Router (using it from other file )
 app.use('/api/v1/bootcamps', bootcamps)
 app.use('/api/v1/courses', courses)
+app.use('/api/v1/auth', auth)
 
 app.use(errorHandler)
 

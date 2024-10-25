@@ -1,4 +1,6 @@
 const express = require('express')
+const { protect } = require('../middleware/auth')
+
 // https://www.npmjs.com/package/router
 const router = express.Router({
   mergeParams: true,
@@ -23,13 +25,13 @@ router.route('/').get(
   }),
   getCourses
 )
-router.route('/').post(addCourse)
+router.route('/').post(protect, addCourse)
 
 router
   .route('/:id')
   .get(getCourseById)
-  .put(updateCourseById)
-  .delete(deleteCourseById)
+  .put(protect, updateCourseById)
+  .delete(protect, deleteCourseById)
 
 // router
 //   .route('/:id')

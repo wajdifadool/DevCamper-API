@@ -29,7 +29,7 @@ const errorHandler = (err, req, res, next) => {
     success: false,
     error: error.message || 'Server Error',
   })
-  // TODO:ADD looger for finding the error 
+  // TODO:ADD looger for finding the error
 }
 
 module.exports = errorHandler

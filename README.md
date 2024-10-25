@@ -2,10 +2,7 @@
 
 ## RESTful API with Node.js, Express, MongoDB, and Mongoose
 
-> Work in progress ...
-> Work in progress ...
-> Work in progress ...
-> Work in progress ...
+## Endpoints
 
 This project is a full RESTful API built using **Node.js**, **Express**, **MongoDB**, and **Mongoose**. The API provides the ability to perform CRUD operations on data stored in a MongoDB database.
 
@@ -17,7 +14,7 @@ This project is a full RESTful API built using **Node.js**, **Express**, **Mongo
 - Express.js for building routes and handling requests
 - Node.js for the backend server
 
-## Technologies Used
+## Tech Stack
 
 - **Node.js**: JavaScript runtime for server-side code
 - **Express.js**: Web framework for handling routes and middleware
@@ -25,10 +22,6 @@ This project is a full RESTful API built using **Node.js**, **Express**, **Mongo
 - **Mongoose**: ODM (Object Data Modeling) library for MongoDB
 - **Postman** (or CLI tools like curl): For testing API requests
 -
-
-## Endpoints
-
-> to be added
 
 ## Future Improvements
 
@@ -53,7 +46,3 @@ This project is a full RESTful API built using **Node.js**, **Express**, **Mongo
     MONGO_URI=your_mongodb_connection_string
     PORT=your_preferred_port
    ```
-
-### License
-
-MIT
