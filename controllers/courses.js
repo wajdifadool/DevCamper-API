@@ -58,12 +58,24 @@ exports.getCourseById = asyncHandler(async (req, res, next) => {
 exports.addCourse = asyncHandler(async (req, res, next) => {
   req.body.bootcamp = req.params.bootcampId
 
+  req.body.user = req.user.id
+
   // Check for the bootcamp
   const bootcamp = await Bootcamp.findById(req.params.bootcampId)
 
   if (!bootcamp) {
     return next(
       new ErrorResponse(`BootCamp Not found with id of ${req.params.id}`, 400)
+    )
+  }
+
+  // Only Bootcamp creator can add  Courses to it
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} not authorized to add Course to BootCamp ${bootcamp._id}`,
+        404
+      )
     )
   }
   const course = await Course.create(req.body)
@@ -83,15 +95,28 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/courses/:id
 // @access  Private
 exports.updateCourseById = asyncHandler(async (req, res, next) => {
-  const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  })
+  req.body.user = req.user.id
+
+  let course = await Course.findById(req.params.id)
+
   if (!course) {
     return next(
       new ErrorResponse(`Course Not found with id of ${req.params.id}`, 404)
     )
   }
+
+  // Only owner can edit its courses
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`User not authorized to Edit Course ${course.id}`, 404)
+    )
+  }
+
+  course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  })
+
   res.status(200).json({
     success: true,
     data: course,
@@ -124,6 +149,16 @@ exports.deleteCourseById = asyncHandler(async (req, res, next) => {
   if (!course) {
     return next(
       new ErrorResponse(`Course Not found with id of ${req.params.id}`, 404)
+    )
+  }
+
+  // Only owner can edit its courses
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User not authorized to Delete Course ${course.id}`,
+        404
+      )
     )
   }
 
