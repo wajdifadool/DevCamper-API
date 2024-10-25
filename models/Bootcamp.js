@@ -103,7 +103,14 @@ const BootcampSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    // User now will be associated with the bootcamp
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
+
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },

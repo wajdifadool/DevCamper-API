@@ -3,6 +3,7 @@
 
 const Bootcamp = require('../models/Bootcamp')
 const Course = require('../models/Course')
+
 const { uploadFile } = require('../config/firebasestorage')
 const asyncHandler = require('../middleware/async')
 const path = require('path')
@@ -29,7 +30,6 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
 exports.getBootcampById = asyncHandler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findById(req.params.id)
 
-  console.log(req.params.id)
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp Not found with id of ${req.params.id}`, 404)
@@ -43,7 +43,28 @@ exports.getBootcampById = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/bootcamps
 // @access  Private
 exports.createBootcamp = asyncHandler(async (req, res, next) => {
-  //   console.log(req.body)
+  // add user to req.body
+  req.body.user = req.user.id
+
+  // Check for Published bootcamps
+  const publishedBootCamp = await Bootcamp.findOne({
+    user: req.user.id,
+  })
+
+  console.log(publishedBootCamp)
+
+  // idea Here, admin can add tomuchBootcamps ,
+  // publisher can only add one bootcampe !
+
+  // if if (publishedBootCamp ) mean we found one bootcamp by the user
+  if (publishedBootCamp && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User with the id: ${req.user.id} can publish just 1 bootcamp`,
+        400
+      )
+    )
+  }
 
   const bootcamp = await Bootcamp.create(req.body)
   const id = bootcamp._id
@@ -60,15 +81,27 @@ exports.createBootcamp = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/bootcamps/:id
 // @access  Private
 exports.updateBootcampById = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  })
+  let bootcamp = await Bootcamp.findById(req.params.id)
+
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp Not found with id of ${req.params.id}`, 404)
     )
   }
+
+  // Only Bootcamp creator and admin can edit the bootcamp
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`User ${req.params.id} not authorized to update`, 404)
+    )
+  }
+
+  // now we update
+  bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  })
+
   res.status(200).json({
     success: true,
     data: bootcamp,
@@ -87,6 +120,13 @@ exports.deleteBootcampById = asyncHandler(async (req, res, next) => {
     )
   }
 
+  // Only Bootcamp creator and admin can edit the bootcamp
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`User ${req.params.id} not authorized to delete`, 404)
+    )
+  }
+
   // Cascade delete courses related to the bootcamp
   await bootcamp.deleteOne() // will delete and triger the pre.remove middileware
 
@@ -102,6 +142,13 @@ exports.uploadImageBootcamp = asyncHandler(async (req, res, next) => {
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp Not found with id of ${req.params.id}`, 404)
+    )
+  }
+
+  // Only Bootcamp creator and admin can upload Photo TO bootcamp
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(`User ${req.params.id} not authorized to update`, 404)
     )
   }
 
