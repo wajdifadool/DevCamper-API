@@ -1,5 +1,5 @@
 const express = require('express')
-const { protect } = require('../middleware/auth')
+const { protect, authorize } = require('../middleware/auth')
 
 // https://www.npmjs.com/package/router
 const router = express.Router({
@@ -25,13 +25,13 @@ router.route('/').get(
   }),
   getCourses
 )
-router.route('/').post(protect, addCourse)
+router.route('/').post(protect, authorize('publisher', 'admin'), addCourse)
 
 router
   .route('/:id')
   .get(getCourseById)
-  .put(protect, updateCourseById)
-  .delete(protect, deleteCourseById)
+  .put(protect, authorize('publisher', 'admin'), updateCourseById)
+  .delete(protect, authorize('publisher', 'admin'), deleteCourseById)
 
 // router
 //   .route('/:id')

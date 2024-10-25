@@ -1,5 +1,5 @@
 const express = require('express')
-const { protect } = require('../middleware/auth')
+const { protect, authorize } = require('../middleware/auth')
 // https://www.npmjs.com/package/router
 const router = express.Router()
 
@@ -33,15 +33,18 @@ router.use('/:bootcampId/courses', courseRouter)
 router
   .route('/')
   .get(advancedResults(Bootcamp, 'courses'), getBootcamps)
-  .post(protect, createBootcamp)
+  .post(protect, authorize('publisher', 'admin'), createBootcamp)
 
 router
   .route('/:id')
   .get(getBootcampById)
-  .put(protect, updateBootcampById)
-  .delete(protect, deleteBootcampById)
+  .put(protect, authorize('publisher', 'admin'), updateBootcampById)
+  .delete(protect, authorize('publisher', 'admin'), deleteBootcampById)
 
-router.route('/:id/photo').put(uploadImageBootcamp)
+router
+  .route('/:id/photo')
+  //
+  .put(protect, authorize('publisher', 'admin'), uploadImageBootcamp)
 
 // Route to create a bootcamp
 // router.post('/', createBootcamp )
