@@ -1,7 +1,7 @@
 const express = require('express')
 const { protect, authorize } = require('../middleware/auth')
 // https://www.npmjs.com/package/router
-const router = express.Router()
+const router = express.Router({ mergeParams: true }) // merge params for reviews endpoint
 
 const {
   createBootcamp,
@@ -16,6 +16,7 @@ const advancedResults = require('../middleware/advancedResults')
 
 // Include Other resource Router
 const courseRouter = require('./courses')
+const reviewRouter = require('./reviews')
 // Re-route into other resource routers
 /**
  * So it's basically going to pass it on to the
@@ -29,6 +30,7 @@ const courseRouter = require('./courses')
  */
 
 router.use('/:bootcampId/courses', courseRouter)
+router.use('/:bootcampId/reviews', reviewRouter) // any <Endpoint> will be forwarded to <reviewRouter>
 
 router
   .route('/')
