@@ -5,6 +5,15 @@ const path = require('path')
 const dotenv = require('dotenv')
 const colors = require('colors')
 const cookieParser = require('cookie-parser')
+// Scurity
+const mongoSanitize = require('express-mongo-sanitize')
+const helemt = require('helmet')
+const xss = require('xss-clean')
+var hpp = require('hpp')
+const rateLimit = require('express-rate-limit')
+
+// Enable cors
+var cors = require('cors')
 
 const morgan = require('morgan')
 const connectDB = require('./config/db')
@@ -33,6 +42,8 @@ const app = express()
 
 // Body Parser
 app.use(express.json())
+app.use(express.urlencoded({ extended: true })) // To parse URL-encoded bodies
+
 // Dev loging middleware
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
@@ -40,6 +51,35 @@ if (process.env.NODE_ENV === 'development') {
 
 // File Uploading middleware
 app.use(fileUpload())
+
+/* * * * * * *
+ * Security  *
+ * * * * * * */
+// To remove data using these defaults:
+app.use(mongoSanitize())
+
+// Help secure Express apps by setting HTTP response headers.
+app.use(helemt())
+
+// Prevent xss
+app.use(xss())
+
+// https://express-rate-limit.mintlify.app/quickstart/usage#using-the-library
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 500, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
+
+app.use(limiter)
+// Prvevent hpp params Poulitoin
+
+// prevent Hpp header polution
+app.use(hpp())
+
+// enable CORS (TODO: change just for the  domains)
+app.use(cors())
 
 // Set static Folder so we can use the image
 app.use(express.static(path.join(__dirname, 'public')))
