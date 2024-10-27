@@ -184,4 +184,42 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res)
 })
 
+// @desc    Update User
+// @route   PUT /api/v1/auth/updatepassword
+// @access  Private
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id
+
+  const user = await User.findById(userId).select('+password')
+
+  if (!(await user.matchPassword(req.body.currentPassword))) {
+    return next(new ErrorResponse('Worng Original password ', 400))
+  }
+
+  // the user objet from DataBase
+  user.password = req.body.newPassword
+
+  await user.save()
+
+  sendTokenResponse(user, 200, res)
+
+  res.status(200).json({
+    succses: true,
+    data: user,
+  })
+})
+
+// @desc    Get current logged in user
+// @route   PSOT /api/v1/auth/me
+// @access  Pirvate
+exports.getMe = asyncHandler(async (req, res, next) => {
+  const { id } = req.user
+  const user = await User.findById(id)
+
+  res.status(200).json({
+    data: user,
+    succsess: true,
+  })
+})
+
 // http://localhost:5000/api/v1/auth/resetpassword/1d8b8c10a40ea1456e0e7b22494210f13e9a0f7a

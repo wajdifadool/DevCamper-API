@@ -14,6 +14,7 @@ const { initializeFirebase, uploadFile } = require('./config/firebasestorage')
 const bootcamps = require('./routes/bootcamps')
 const courses = require('./routes/courses')
 const auth = require('./routes/auth')
+const users = require('./routes/users')
 const fileUpload = require('express-fileupload')
 // Load config.env
 dotenv.config({ path: './config/config.env' })
@@ -43,7 +44,7 @@ app.use(fileUpload())
 app.use(express.static(path.join(__dirname, 'public')))
 
 // cookie Parser
-app.use(cookieParser())
+app.use(cookieParser()) // fror sending token beck to the client
 
 // const logger = (req, res, next) => {
 //   console.log(`${req.method }`)
@@ -57,14 +58,15 @@ app.use(cookieParser())
 //   next() // so it moves to next peace in the cucle
 // }
 
-// app.use(logger) // we have accsess to middlware throgh out all routes
+// app.use(logger) // we have accsess to middlware throgh out all routes TODO:bring a looger to log errors
 // ----------------
-// --------------- Bootcamps -----------
+// --------------- ROUTES  -----------
 // ----------------
 // Mount Router (using it from other file )
 app.use('/api/v1/bootcamps', bootcamps)
 app.use('/api/v1/courses', courses)
 app.use('/api/v1/auth', auth)
+app.use('/api/v1/users', users)
 
 app.use(errorHandler)
 
