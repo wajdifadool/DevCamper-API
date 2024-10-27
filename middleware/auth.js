@@ -19,7 +19,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   }
   //   For deploymnet only
   // else if (req.cookies.token) {
-  //   token = req.cookies.token;
+  // token = req.cookies.token
   // }
 
   // Make sure token exists
