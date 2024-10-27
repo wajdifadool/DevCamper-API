@@ -159,3 +159,8 @@ process.on('SIGTERM', () => {
 })
 
 // uploadFile('/Users/wajdi/Downloads/IMG_7084.JPG')
+
+//  \
+// && sudo chmod +x install.sh \
+// && sudo ./install.sh \
+// && rm install.sh
