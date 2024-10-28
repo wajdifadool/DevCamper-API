@@ -2,7 +2,7 @@
 
 ## Description
 
-- This project is a full RESTfull API built using
+- This project is a full RESTful API built using
   **Node.js**, **Express**, **MongoDB**, and **Mongoose**.
 
 - The API provides the ability to perform CRUD operations on data stored in a MongoDB database.
