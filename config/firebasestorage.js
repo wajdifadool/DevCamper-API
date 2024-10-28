@@ -2,8 +2,6 @@
 const admin = require('firebase-admin')
 const path = require('path')
 
-// Load the Firebase service account key TODO: maby hide the file params on deploy
-
 const initializeFirebase = () => {
   // Initialize Firebase Admin SDK
 
